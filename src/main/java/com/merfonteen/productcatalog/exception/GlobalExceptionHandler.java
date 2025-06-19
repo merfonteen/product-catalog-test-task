@@ -23,13 +23,21 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFoundException(NotFoundException ex) {
-        return new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage(), Instant.now());
+        return ErrorResponse.builder()
+                .status(HttpStatus.NOT_FOUND.value())
+                .exceptionMessage(ex.getMessage())
+                .timestamp(Instant.now())
+                .build();
     }
 
     @ExceptionHandler(BadRequestException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleBadRequestException(BadRequestException ex) {
-        return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), Instant.now());
+        return ErrorResponse.builder()
+                .status(HttpStatus.NOT_FOUND.value())
+                .exceptionMessage(ex.getMessage())
+                .timestamp(Instant.now())
+                .build();
     }
 
     @ExceptionHandler(Exception.class)

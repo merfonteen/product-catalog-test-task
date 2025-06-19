@@ -1,10 +1,12 @@
 package com.merfonteen.productcatalog.exception;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
 import java.time.Instant;
 
+@AllArgsConstructor
 @Data
 @Builder
 public class ErrorResponse {
@@ -12,10 +14,4 @@ public class ErrorResponse {
     private String message;
     private final String exceptionMessage;
     private final Instant timestamp;
-
-    public ErrorResponse(int status, String exceptionMessage, Instant timestamp) {
-        this.status = status;
-        this.exceptionMessage = exceptionMessage;
-        this.timestamp = timestamp;
-    }
 }
