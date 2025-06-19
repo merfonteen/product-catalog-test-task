@@ -11,7 +11,7 @@ public interface ProductService {
     ProductResponseDto getProduct(Long id);
     ProductPageResponseDto getProducts(int page, int size);
     List<ProductResponseDto> getProductsByCategory(String category);
-    ProductResponseDto createProduct(ProductRequestDto productRequestDto);
-    ProductResponseDto updateProduct(Long id, ProductUpdateDto productUpdateDto);
+    ProductResponseDto createProduct(ProductRequestDto productRequestDto, Long currentUserId);
+    ProductResponseDto updateProduct(Long id, ProductUpdateDto productUpdateDto, Long currentUserId);
     void deleteProduct(Long id);
 }

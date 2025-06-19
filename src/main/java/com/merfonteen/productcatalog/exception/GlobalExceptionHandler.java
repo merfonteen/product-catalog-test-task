@@ -40,6 +40,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .build();
     }
 
+    @ExceptionHandler(TooManyRequestsException.class)
+    @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
+    public ErrorResponse handleTooManyRequestsException(TooManyRequestsException ex) {
+        return ErrorResponse.builder()
+                .status(HttpStatus.NOT_FOUND.value())
+                .exceptionMessage(ex.getMessage())
+                .timestamp(Instant.now())
+                .build();
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGlobalException(Exception ex) {
         log.error("Unexpected error occurred: {}", ex.getMessage(), ex);

@@ -10,6 +10,7 @@ import com.merfonteen.productcatalog.exception.NotFoundException;
 import com.merfonteen.productcatalog.mapper.ProductMapper;
 import com.merfonteen.productcatalog.repository.ProductRepository;
 import com.merfonteen.productcatalog.service.ProductService;
+import com.merfonteen.productcatalog.util.RequestRateLimiter;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +35,7 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductMapper productMapper;
     private final ProductRepository productRepository;
+    private final RequestRateLimiter requestRateLimiter;
 
     @Cacheable(value = "product-by-id", key = "#id")
     @Override
@@ -70,7 +72,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Transactional
     @Override
-    public ProductResponseDto createProduct(ProductRequestDto productRequestDto) {
+    public ProductResponseDto createProduct(ProductRequestDto productRequestDto, Long currentUserId) {
         Optional<Product> existingProduct = productRepository.findByName(productRequestDto.getName());
         if(existingProduct.isPresent()) {
             throw new BadRequestException(
@@ -86,6 +88,8 @@ public class ProductServiceImpl implements ProductService {
         Optional.ofNullable(productRequestDto.getStock()).ifPresent(productBuilder::stock);
         Optional.ofNullable(productRequestDto.getCategory()).ifPresent(productBuilder::category);
 
+        requestRateLimiter.limitRequestsByUserId(currentUserId);
+
         Product newProduct = productBuilder.build();
         Product savedProduct = productRepository.save(newProduct);
         log.info("Successfully saved to database product: '{}'", savedProduct);
@@ -99,7 +103,7 @@ public class ProductServiceImpl implements ProductService {
     })
     @Transactional
     @Override
-    public ProductResponseDto updateProduct(Long id, ProductUpdateDto productUpdateDto) {
+    public ProductResponseDto updateProduct(Long id, ProductUpdateDto productUpdateDto, Long currentUserId) {
         Product productToUpdate = findProductByIdOrThrowException(id);
 
         Optional.ofNullable(productUpdateDto.getName()).ifPresent(productToUpdate::setName);
@@ -108,6 +112,8 @@ public class ProductServiceImpl implements ProductService {
         Optional.ofNullable(productUpdateDto.getStock()).ifPresent(productToUpdate::setStock);
         Optional.ofNullable(productUpdateDto.getPrice()).ifPresent(productToUpdate::setPrice);
         productToUpdate.setUpdatedAt(LocalDateTime.now());
+
+        requestRateLimiter.limitRequestsByUserId(currentUserId);
 
         Product updatedProduct = productRepository.save(productToUpdate);
         log.info("Product with id {} was updated successfully", updatedProduct.getId());
