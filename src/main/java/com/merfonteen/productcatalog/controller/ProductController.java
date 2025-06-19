@@ -39,16 +39,18 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<ProductResponseDto> createProduct(@RequestBody @Valid ProductRequestDto productRequestDto) {
-        ProductResponseDto product = productService.createProduct(productRequestDto);
+    public ResponseEntity<ProductResponseDto> createProduct(@RequestBody @Valid ProductRequestDto productRequestDto,
+                                                            @RequestHeader("X-User-Id") Long currentUserId) {
+        ProductResponseDto product = productService.createProduct(productRequestDto, currentUserId);
         URI location = URI.create("/api/v1/products/" + product.getId());
         return ResponseEntity.created(location).body(product);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ProductResponseDto> updateProduct(@PathVariable("id") Long id,
-                                                            @RequestBody @Valid ProductUpdateDto productUpdateDto) {
-        return ResponseEntity.ok(productService.updateProduct(id, productUpdateDto));
+                                                            @RequestBody @Valid ProductUpdateDto productUpdateDto,
+                                                            @RequestHeader("X-User-Id") Long currentUserId) {
+        return ResponseEntity.ok(productService.updateProduct(id, productUpdateDto, currentUserId));
     }
 
     @DeleteMapping("/{id}")
