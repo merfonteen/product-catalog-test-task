@@ -57,6 +57,12 @@ public class ProductServiceImpl implements ProductService {
                 .build();
     }
 
+    @Override
+    public List<ProductResponseDto> getProductsByCategory(String category) {
+        List<Product> productsByCategory = productRepository.findAllByCategory(category);
+        return productMapper.toDtos(productsByCategory);
+    }
+
     @Transactional
     @Override
     public ProductResponseDto createProduct(ProductRequestDto productRequestDto) {

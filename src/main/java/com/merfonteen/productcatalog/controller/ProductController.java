@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 
 @RequestMapping("/api/v1/products")
 @RestController
@@ -24,6 +25,11 @@ public class ProductController {
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponseDto> getProduct(@PathVariable("id") Long id) {
         return ResponseEntity.ok(productService.getProduct(id));
+    }
+
+    @GetMapping("/category/{category}")
+    public ResponseEntity<List<ProductResponseDto>> getProductsByCategory(@PathVariable("category") String category) {
+        return ResponseEntity.ok(productService.getProductsByCategory(category));
     }
 
     @GetMapping
