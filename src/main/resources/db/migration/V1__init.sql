@@ -10,6 +10,13 @@ CREATE TABLE products
     updated_at  TIMESTAMP
 );
 
+
+
+CREATE INDEX idx_products_name ON products(name);
+CREATE INDEX idx_products_category ON products(category);
+
+
+
 INSERT INTO products (name, description, price, category, stock, created_at, updated_at)
 VALUES ('Apple iPhone 14', 'Latest model of iPhone', 999.99, 'Electronics', 25, NOW(), NOW()),
        ('Samsung Galaxy S23', 'Newest Galaxy smartphone', 899.99, 'Electronics', 40, NOW(), NOW()),
