@@ -3,7 +3,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:h2:mem:productdb
+    url: jdbc:h2:mem:product_db
     driver-class-name: org.h2.Driver
     username: sa
     password:
@@ -22,11 +22,11 @@ spring:
     properties:
       hibernate:
         format_sql: true
-#  data:
-#    redis:
-#      host: redis
-#      port: 6379
-#  cache:
-#    type: redis
+  data:
+    redis:
+      host: redis
+      port: 6379
+  cache:
+    type: redis
 
 

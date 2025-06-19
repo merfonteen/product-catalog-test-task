@@ -13,6 +13,9 @@ import com.merfonteen.productcatalog.service.ProductService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,6 +35,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductMapper productMapper;
     private final ProductRepository productRepository;
 
+    @Cacheable(value = "product-by-id", key = "#id")
     @Override
     public ProductResponseDto getProduct(Long id) {
         Product product = findProductByIdOrThrowException(id);
@@ -57,6 +61,7 @@ public class ProductServiceImpl implements ProductService {
                 .build();
     }
 
+    @Cacheable(value = "products-by-category", key = "#category")
     @Override
     public List<ProductResponseDto> getProductsByCategory(String category) {
         List<Product> productsByCategory = productRepository.findAllByCategory(category);
@@ -88,6 +93,10 @@ public class ProductServiceImpl implements ProductService {
         return productMapper.toDto(savedProduct);
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "product-by-id", key = "#id"),
+            @CacheEvict(value = "products-by-category", allEntries = true)
+    })
     @Transactional
     @Override
     public ProductResponseDto updateProduct(Long id, ProductUpdateDto productUpdateDto) {
@@ -106,6 +115,10 @@ public class ProductServiceImpl implements ProductService {
         return productMapper.toDto(updatedProduct);
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "product-by-id", key = "#id"),
+            @CacheEvict(value = "products-by-category", allEntries = true)
+    })
     @Transactional
     @Override
     public void deleteProduct(Long id) {
